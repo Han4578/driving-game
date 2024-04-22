@@ -6,7 +6,8 @@
 
 canvas {
     aspect-ratio: 16 / 9;
-    width: 100vw;
+    width: 100%;
+    max-height: 100vh;
     background-color: grey;
 }
 
@@ -16,4 +17,19 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.resume {
+    position: absolute;
+    aspect-ratio: 1;
+    width: 20vw;
+    display: none;
+    border-radius: 50%;
+    z-index: 2;
+}
+
+.display {
+    display: inline-block;
 }
