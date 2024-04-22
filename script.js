@@ -9,10 +9,10 @@ let cars = []
 let bars = []
 let moveUp = false
 let moveDown = false
-let continueGame = true
+let continueGame = false
 let carWidth = 140
 let deltaTime = Date.now()
-let resumeButton = document.querySelector(".resume")
+let button = document.querySelector(".button")
 let carDelay = deltaTime
 let barDelay = deltaTime
 let pauseTime = 0
@@ -20,7 +20,7 @@ let pauseTime = 0
 canvas.width = width
 canvas.height = height
 
-player = {
+let player = {
     x: scaleWidth(100),
     y: height / 2 - scaleHeight(40),
     color: "red",
@@ -39,7 +39,7 @@ document.addEventListener("keyup", (e) => {
 })
 
 document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState != "visible") pause()
+    if (document.visibilityState != "visible" && continueGame) pause()
 })
 
 canvas.addEventListener("pointerdown", e => {
@@ -57,15 +57,7 @@ canvas.addEventListener("pointercancel", () => {
 })
 
 
-resumeButton.addEventListener("click", resume)
-
-for (let i = 0; i < 5; i++) {
-    bars.push({
-        x: width - 500 * i * speed * 1.2,
-        time: Date.now()
-    })
-    
-}
+button.addEventListener("click", start)
 
 function nextFrame() {
     if (!continueGame) return
@@ -123,6 +115,10 @@ function checkCollison(c, player) {
 
 function endGame() {
     continueGame = false
+    button.removeEventListener("click", resume)
+    button.addEventListener("click", start)
+    button.innerText = "Restart"
+    button.classList.add("display")
 }
 
 function scaleWidth(val) {
@@ -136,14 +132,14 @@ function scaleHeight(val) {
 function pause() {
     pauseTime = Date.now()
     continueGame = false
-    resumeButton.classList.add("display")
+    button.classList.add("display")
 }
 
 function resume() {
     carDelay += Date.now() - pauseTime
     barDelay += Date.now() - pauseTime
     continueGame = true
-    resumeButton.classList.remove("display")
+    button.classList.remove("display")
     deltaTime = Date.now()
     window.requestAnimationFrame(nextFrame)
 }
@@ -168,4 +164,24 @@ function addBar() {
     })
 }
 
-window.requestAnimationFrame(nextFrame)
+function start() {
+    button.removeEventListener("click", start)
+    button.addEventListener("click", resume)
+    button.innerText = "Resume"
+    button.classList.remove("display")
+    continueGame = true
+
+    bars = []
+    cars = []
+    player.y = height / 2 - scaleHeight(40)
+    
+    for (let i = 0; i < 5; i++) {
+        bars.push({
+            x: width - 500 * i * speed * 1.2,
+            time: Date.now()
+        })
+        
+    }
+    canvas.requestFullscreen()
+    window.requestAnimationFrame(nextFrame)
+}

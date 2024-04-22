@@ -18,10 +18,10 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 
-.resume {
+.button {
     position: absolute;
     aspect-ratio: 1;
     width: 20vw;
