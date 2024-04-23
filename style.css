@@ -33,3 +33,26 @@ body {
 .display {
     display: inline-block;
 }
+
+.score {
+    position: absolute;
+    top: calc(50vh - 100vw / 32 * 9);
+    right: 1vw;
+    text-align: end;
+    font-size: 5em;
+    font-family: arcade;
+}
+
+.high-score {
+    position: absolute;
+    right: 1vh;
+    top: calc(50vh - 100vw / 32 * 9 + 100px);
+    text-align: end;
+    font-size: 2em;
+    font-family: arcade;
+}
+
+@font-face {
+    font-family: arcade;
+    src: url(ka1.ttf);
+}

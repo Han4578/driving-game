@@ -1,9 +1,9 @@
 let canvas = document.querySelector("canvas")
 let ctx = canvas.getContext("2d")
-let width = window.innerWidth
-let height = canvas.getBoundingClientRect().height
-let speed = scaleWidth(1)
-let playerSpeed = scaleHeight(0.5)
+let width = Math.max(window.innerWidth, 1024)
+let height = Math.max(canvas.getBoundingClientRect().height, 576)
+let speed = 1
+let playerSpeed = 0.5
 let colours = ["orange", "green", "darkblue", "purple", "yellow", "white", "orange"]
 let cars = []
 let bars = []
@@ -13,24 +13,30 @@ let continueGame = false
 let carWidth = 140
 let deltaTime = Date.now()
 let button = document.querySelector(".button")
+let scoreDiv = document.querySelector(".score")
+let highScoreDiv = document.querySelector(".high-score")
 let carDelay = deltaTime
 let barDelay = deltaTime
+let scoreDelay = deltaTime
 let pauseTime = 0
+let score = 0
+let highScore = localStorage.getItem("hs") ?? 0
 
 canvas.width = width
 canvas.height = height
 
 let player = {
-    x: scaleWidth(100),
-    y: height / 2 - scaleHeight(40),
+    x: 100,
+    y: height / 2 - 40,
     color: "red",
-    width: scaleWidth(carWidth),
-    height: scaleHeight(80)
+    width: carWidth,
+    height: 80
 }
 
 document.addEventListener("keydown", (e) => {
     if (["ArrowUp", "w", "W"].includes(e.key)) moveUp = true
     if (["ArrowDown", "s", 'S'].includes(e.key)) moveDown = true
+    if (e.key == "Enter" && button.classList.contains("display")) button.click()
 })
 
 document.addEventListener("keyup", (e) => {
@@ -43,12 +49,12 @@ document.addEventListener("visibilitychange", () => {
 })
 
 canvas.addEventListener("pointerdown", e => {
-    if (e.clientX <= width / 2) moveUp = true
+    if (e.clientX <= window.innerWidth / 2) moveUp = true
     else moveDown = true
 })
 
 canvas.addEventListener("pointerup", e => {
-    if (e.clientX <= width / 2) moveUp = false
+    if (e.clientX <= window.innerWidth / 2) moveUp = false
     else moveDown = false
 })
 
@@ -80,7 +86,7 @@ function nextFrame() {
         drawCar(car)
     }
     cars = cars.filter(c => {return c.x + c.width > 0})
-    bars = bars.filter(c => {return c.x + scaleWidth(60)> 0})
+    bars = bars.filter(c => {return c.x + 60 > 0})
     if (currentTime - carDelay >= 1000) {
         addCar()
         carDelay = currentTime
@@ -88,6 +94,11 @@ function nextFrame() {
     if (currentTime - barDelay >= 500) {
         addBar()
         barDelay = currentTime
+    }
+    if (currentTime - scoreDelay >= 100) {
+        score++
+        scoreDiv.innerText = score
+        scoreDelay = currentTime
     }
     deltaTime = currentTime
     if (cars.some(c => {return checkCollison(c, player)})) endGame()
@@ -99,13 +110,13 @@ function drawCar(car) {
     ctx.fillStyle = car.color
     ctx.fillRect(car.x, car.y, car.width, car.height)
     ctx.fillStyle = "lightblue"
-    ctx.fillRect(car.x + car.width - scaleWidth(headlights), car.y + car.height - scaleHeight(headlights), scaleWidth(headlights), scaleHeight(headlights))
-    ctx.fillRect(car.x + car.width - scaleWidth(headlights), car.y, scaleWidth(headlights), scaleHeight(headlights))
+    ctx.fillRect(car.x + car.width - headlights, car.y + car.height - headlights, headlights, headlights)
+    ctx.fillRect(car.x + car.width - headlights, car.y, headlights, headlights)
 }
 
 function drawBars(x) {
     ctx.fillStyle = "white"
-    ctx.fillRect(x, height / 2 - 10, scaleWidth(60), scaleHeight(20))
+    ctx.fillRect(x, height / 2 - 10, 60, 20)
 }
 
 function checkCollison(c, player) {
@@ -115,18 +126,15 @@ function checkCollison(c, player) {
 
 function endGame() {
     continueGame = false
+    if (highScore < score) {
+        highScore = score
+        localStorage.setItem("hs", highScore)
+        highScoreDiv.innerText = highScore
+    }
     button.removeEventListener("click", resume)
     button.addEventListener("click", start)
     button.innerText = "Restart"
     button.classList.add("display")
-}
-
-function scaleWidth(val) {
-    return val / 1024 * width
-}
-
-function scaleHeight(val) {
-    return val / 576 * height
 }
 
 function pause() {
@@ -147,10 +155,10 @@ function resume() {
 function addCar() {
     let w = Math.random() * carWidth + carWidth
     let car = {
-        width: scaleWidth(w),
-        height: scaleHeight(80),
+        width: w,
+        height: 80,
         x: width + w,
-        y: Math.random() * (height - scaleHeight(80)),
+        y: Math.random() * (height - 80),
         color: colours[Math.round(Math.random() * (colours.length - 1))],
         time:  Date.now()
     }
@@ -170,10 +178,11 @@ function start() {
     button.innerText = "Resume"
     button.classList.remove("display")
     continueGame = true
+    score = 0
 
     bars = []
     cars = []
-    player.y = height / 2 - scaleHeight(40)
+    player.y = height / 2 - 40
     
     for (let i = 0; i < 5; i++) {
         bars.push({
@@ -182,6 +191,9 @@ function start() {
         })
         
     }
-    canvas.requestFullscreen()
+    document.body.requestFullscreen()
     window.requestAnimationFrame(nextFrame)
 }
+
+scoreDiv.innerText = 0
+highScoreDiv.innerText = highScore
