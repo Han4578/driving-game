@@ -37,22 +37,37 @@ body {
 .score {
     position: absolute;
     top: calc(50vh - 100vw / 32 * 9);
-    right: 1vw;
+    right: 2vw;
     text-align: end;
-    font-size: 5em;
+    font-size: 10vw;
     font-family: arcade;
 }
 
 .high-score {
     position: absolute;
     right: 1vh;
-    top: calc(50vh - 100vw / 32 * 9 + 100px);
+    top: calc(50vh - 100vw / 32 * 9 + 11vw);
     text-align: end;
-    font-size: 2em;
+    font-size: 5vw;
     font-family: arcade;
+}
+
+canvas.follow-height {
+    width: auto;
+    height: 100vh;
+}
+
+.score.follow-height, .high-score.follow-height {
+    top: 0;
+    right: calc(50vw - 100vh / 18 * 16 + 2vw);
+}
+
+.high-score.follow-height {
+    top: 11vw;
 }
 
 @font-face {
     font-family: arcade;
     src: url(ka1.ttf);
 }
+

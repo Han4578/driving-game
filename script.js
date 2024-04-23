@@ -48,18 +48,32 @@ document.addEventListener("visibilitychange", () => {
     if (document.visibilityState != "visible" && continueGame) pause()
 })
 
-canvas.addEventListener("pointerdown", e => {
+document.addEventListener("pointerdown", e => {
     if (e.clientX <= window.innerWidth / 2) moveUp = true
     else moveDown = true
 })
 
-canvas.addEventListener("pointerup", e => {
+document.addEventListener("pointerup", e => {
     if (e.clientX <= window.innerWidth / 2) moveUp = false
     else moveDown = false
 })
 
-canvas.addEventListener("pointercancel", () => {
+document.addEventListener("pointercancel", () => {
     moveUp = moveDown = false
+})
+
+window.addEventListener("resize", () => {
+    console.log("hi");
+    if (window.innerWidth / 16 * 9 > window.innerHeight) {
+        canvas.classList.add("follow-height")
+        scoreDiv.classList.add("follow-height")
+        highScoreDiv.classList.add("follow-height")
+    }
+    else {
+        canvas.classList.remove("follow-height")
+        scoreDiv.classList.remove("follow-height")
+        highScoreDiv.classList.remove("follow-height")
+    }
 })
 
 
@@ -197,3 +211,8 @@ function start() {
 
 scoreDiv.innerText = 0
 highScoreDiv.innerText = highScore
+if (window.innerWidth / 16 * 9 > window.innerHeight) {
+    canvas.classList.add("follow-height")
+    scoreDiv.classList.add("follow-height")
+    highScoreDiv.classList.add("follow-height")
+}
