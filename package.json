@@ -1,0 +1,31 @@
+{
+  "name": "driving-game",
+  "version": "1.0.0",
+  "description": "How far can you go?",
+  "main": "script.js",
+  "scripts": {
+    "test": "node script.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Han4578/driving-game.git"
+  },
+  "keywords": [
+    "driving",
+    "javaScript",
+    "node",
+    "sql"
+  ],
+  "author": "Han4578",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Han4578/driving-game/issues"
+  },
+  "homepage": "https://github.com/Han4578/driving-game#readme",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mysql": "^2.18.1",
+    "sqlite3": "^5.1.7"
+  }
+}
