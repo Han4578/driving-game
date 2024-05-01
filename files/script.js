@@ -1,9 +1,9 @@
-import {io} from "https://cdn.socket.io/4.7.5/socket.io.min.js"
 let canvas = document.querySelector("canvas")
 let ctx = canvas.getContext("2d")
 let width = Math.max(window.innerWidth, 1024)
 let height = Math.max(canvas.getBoundingClientRect().height, 576)
 let speed = 1
+let originalSpeed = speed
 let playerSpeed = 0.5
 let colours = ["orange", "green", "darkblue", "purple", "yellow", "white", "orange"]
 let cars = []
@@ -19,20 +19,13 @@ let highScoreDiv = document.querySelector(".high-score")
 let carDelay = deltaTime
 let barDelay = deltaTime
 let scoreDelay = deltaTime
+let speedDelay = deltaTime + 10000
 let pauseTime = 0
 let score = 0
-let id = localStorage.getItem("id")
-let socket = io()
-
-if (!id) {
-    id = crypto.randomUUID()
-    localStorage.setItem("id", id)
-}
-
-let highScore = fetch("https://drivedrivedrive.glitch.me/scores/" + id)
-
+let highScore = 0
 canvas.width = width
 canvas.height = height
+ctx.font = "40px arcade"
 
 let player = {
     x: 100,
@@ -98,7 +91,7 @@ function nextFrame() {
     ctx.clearRect(0, 0, width, height)
 
     for (let bar of bars) {
-        bar.x -= (currentTime - deltaTime) * speed * 1.2
+        bar.x -= (currentTime - deltaTime) * speed * (speed + 0.2) / originalSpeed
         drawBars(bar.x)
     }
     drawCar(player)
@@ -106,20 +99,27 @@ function nextFrame() {
         car.x -= (currentTime - deltaTime) * speed
         drawCar(car)
     }
+    ctx.fillStyle = "black"
+    ctx.fillText((speed / originalSpeed).toFixed(1) + "x", 50, 50)
     cars = cars.filter(c => {return c.x + c.width > 0})
     bars = bars.filter(c => {return c.x + 60 > 0})
     if (currentTime - carDelay >= 1000) {
         addCar()
         carDelay = currentTime
     }
-    if (currentTime - barDelay >= 500) {
+    if (currentTime - barDelay >= 500 / (speed + 0.2) * originalSpeed) {
         addBar()
         barDelay = currentTime
     }
     if (currentTime - scoreDelay >= 100) {
-        score++
+        score+= 10 * speed / originalSpeed
         scoreDiv.innerText = score
         scoreDelay = currentTime
+    }
+    if (currentTime - speedDelay >= 5000) {
+        speed = parseFloat((speed + 0.2).toFixed(2))
+        playerSpeed = parseFloat((playerSpeed + 0.1).toFixed(2))
+        speedDelay = currentTime
     }
     deltaTime = currentTime
     if (cars.some(c => {return checkCollison(c, player)})) endGame()
@@ -149,9 +149,7 @@ function endGame() {
     continueGame = false
     if (highScore < score) {
         highScore = score
-        localStorage.setItem("hs", highScore)
         highScoreDiv.innerText = highScore
-        socket.emit("high-score", id, highScore)
     }
     button.removeEventListener("click", resume)
     button.addEventListener("click", start)
@@ -168,6 +166,8 @@ function pause() {
 function resume() {
     carDelay += Date.now() - pauseTime
     barDelay += Date.now() - pauseTime
+    scoreDelay += Date.now() - pauseTime
+    speedDelay += Date.now() - pauseTime
     continueGame = true
     button.classList.remove("display")
     deltaTime = Date.now()
@@ -200,7 +200,14 @@ function start() {
     button.innerText = "Resume"
     button.classList.remove("display")
     continueGame = true
+    speed = 1
     score = 0
+    playerSpeed = 0.5
+    deltaTime = Date.now()
+    carDelay = deltaTime
+    barDelay = deltaTime
+    scoreDelay = deltaTime
+    speedDelay = deltaTime
 
     bars = []
     cars = []
@@ -218,10 +225,8 @@ function start() {
 }
 
 scoreDiv.innerText = 0
-highScoreDiv.innerText = await highScore
 if (window.innerWidth / 16 * 9 > window.innerHeight) {
     canvas.classList.add("follow-height")
     scoreDiv.classList.add("follow-height")
     highScoreDiv.classList.add("follow-height")
 }
-

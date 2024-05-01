@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/Han4578/driving-game#readme",
   "dependencies": {
-    "dotenv": "^16.4.5",
+    "socket.io": "^4.7.5",
     "express": "^4.19.2",
     "mysql": "^2.18.1",
     "sqlite3": "^5.1.7"

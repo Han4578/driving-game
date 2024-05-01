@@ -27,7 +27,7 @@ body {
     width: 20vw;
     display: none;
     border-radius: 50%;
-    z-index: 2;
+    z-index: 1;
 }
 
 .display {
@@ -64,6 +64,90 @@ canvas.follow-height {
 
 .high-score.follow-height {
     top: 11vw;
+}
+
+.leaderboard {
+    aspect-ratio: 1;
+    position: absolute;
+    width: 10vw;
+    left: 1vw;
+    top: calc(50vh - 100vw / 32 * 9 + 1vw);
+    transition: filter 0.2s;
+}
+
+.leaderboard.display {
+    top: 1vh;
+    left: calc(50vw - 100vh / 18 * 16 + 2vw);
+}
+
+.leaderboard:hover {
+    filter: invert(1);
+}
+
+.leaderboard-display {
+    width: 70vw;
+    aspect-ratio: 16 / 9;
+    border: 2px solid black;
+    border-radius: 15px;
+    position: absolute;
+    background-color: rgb(222, 218, 218);
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    padding: 2% 10%;
+    gap: 10px;
+    filter: opacity(0);
+    transition: filter 1s;
+    pointer-events: none;
+}
+
+.darken {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    content: "";
+    z-index: 4;
+    filter: opacity(0);
+    pointer-events: none;
+}
+
+.leaderboard-display.display, .darken.display {
+    filter: opacity(1);
+    pointer-events: all;
+}
+
+.item {
+    width: 100%;
+    flex-basis: 20%;
+    border: 2px solid;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.rank {
+    aspect-ratio: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+}
+
+.player {
+    font-size: 3em;
+    width: 70%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.points {
+    flex-grow: 1;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    font-size: 2em;
 }
 
 @font-face {
